@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: Creating Filter Views in Google Sheets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Harmony -->
+    <!-- Application Structure Plan: The application is structured as a linear, step-by-step interactive tutorial. It begins with a motivational 'Intro' section explaining the benefits, followed by the core 'Tutorial' section which guides the user through each step one at a time with visuals and text. It concludes with a 'Summary'. This guided, sequential structure was chosen because it's the most effective method for teaching a procedural task, preventing user confusion and ensuring they follow the correct workflow from start to finish. User interaction is focused on simple 'Next' and 'Previous' navigation, making it highly accessible. -->
+    <!-- Visualization & Content Choices: The source material is a series of screenshots for a tutorial. Goal: Teach a procedure. Presentation: An interactive slideshow format is used. Each step is a "slide" with a placeholder image and descriptive text. Interaction: Users click 'Next'/'Previous' buttons to navigate. A progress bar provides feedback. Justification: This focuses the user on a single action at a time, improving comprehension over a long, static page. It's more engaging and mimics a guided walkthrough. Method: Vanilla JavaScript manages the state and updates the content dynamically. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .guide-transition {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .guide-step {
+            display: none;
+        }
+        .guide-step.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-[#F8F7F4] text-[#2c3e50]">
+
+    <div class="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#34495e]">Create Custom Views in Google Sheets</h1>
+            <p class="mt-2 text-lg text-[#7f8c8d]">An interactive guide for teachers.</p>
+        </header>
+
+        <main>
+            <section id="intro" class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-200">
+                <h2 class="text-2xl font-bold text-[#34495e] mb-4">Streamline Your Grading Workflow</h2>
+                <p class="text-base md:text-lg text-gray-700 leading-relaxed mb-4">
+                    This guide shows you how to use "Filter Views" in Google Sheets. This powerful feature allows you to create a personalized view of just your students from a master sheet, without changing what other teachers see.
+                </p>
+                <p class="text-base md:text-lg text-gray-700 leading-relaxed font-medium">
+                    The main benefit? You can easily copy a full column of marks from your own spreadsheet and paste it directly into the filtered master sheet in one simple action. Say goodbye to typing marks one-by-one!
+                </p>
+                <div class="text-center mt-6">
+                    <button onclick="startGuide()" class="bg-[#3498db] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#2980b9] transition-colors duration-300 shadow-md">
+                        Start the 5-Step Guide
+                    </button>
+                </div>
+            </section>
+
+            <section id="tutorial" class="hidden bg-white mt-8 p-6 md:p-8 rounded-xl shadow-lg border border-gray-200">
+                <div id="guide-content">
+                </div>
+
+                <div class="mt-8">
+                    <div class="flex justify-between items-center">
+                         <button id="prev-btn" onclick="navigate(-1)" class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Previous
+                        </button>
+                        <div class="text-sm font-medium text-gray-500" id="progress-indicator"></div>
+                         <button id="next-btn" onclick="navigate(1)" class="bg-[#3498db] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#2980b9] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next
+                        </button>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+                        <div id="progress-bar" class="bg-[#3498db] h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="summary" class="hidden bg-white mt-8 p-6 md:p-8 rounded-xl shadow-lg border border-gray-200">
+                 <h2 class="text-2xl font-bold text-[#34495e] mb-4 text-center">That's It! You're Ready.</h2>
+                 <p class="text-base md:text-lg text-gray-700 leading-relaxed text-center">
+                    You've learned how to create, save, and use Filter Views. You can now create a view for each of your classes to make updating marks faster and more accurate.
+                </p>
+                <div class="text-center mt-6">
+                    <button onclick="startGuide()" class="bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-700 transition-colors duration-300 shadow-md">
+                        Restart Guide
+                    </button>
+                </div>
+            </section>
+
+        </main>
+        
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>&copy; 2025 Teacher Tools Inc. Making data entry simpler.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const guideSteps = [
+            {
+                title: "Step 1: Create a New Filter View",
+                description: "With the master sheet open, navigate to the menu at the top. Click on <strong>Data</strong>, then find and select <strong>Create a filter view</strong> from the dropdown menu. This action creates a temporary view that only you can see.",
+                // REPLACE THIS URL with your actual image URL for Image 1
+                image: "image1.jpg" 
+            },
+            {
+                title: "Step 2: Name Your View",
+                description: "A dark bar will appear at the top of your sheet. Click on the text that says 'Name' (or 'Filter 1') and type a descriptive name for your view. For example, 'F4 ICT Class' or 'My Physics Group'. Press <strong>Enter</strong> to save the name.",
+                // REPLACE THIS URL with your actual image URL for Image 2/3
+                image: "image2.jpg"
+            },
+            {
+                title: "Step 3: Apply a Filter",
+                description: "On the dark filter bar, locate the filter icon (a small inverted pyramid) in the header of the column that contains the 'English Name' or 'Student Name'. Click this icon to open the filter options for that column.",                // REPLACE THIS URL with your actual image URL for Image 4
+                image: "image4.jpg"
+            },
+            {
+                title: "Step 4: Select Your Students",
+                description:  "In the filter menu that appears, first click <strong>Clear</strong> to deselect all current entries. Then, scroll through the list or use the search box to find and select only the students in your elective subject group by checking their names. Click <strong>OK</strong> to apply the filter. The sheet will now only display rows corresponding to your selected students.",
+                // REPLACE THIS URL with your actual image URL for Image 5
+                image: "image5.jpg"
+            },
+            {
+                title: "Step 5: Use and Switch Views",
+                description: "Your view is automatically saved. You can now copy and paste your marks. To switch back to the full sheet, click the <strong>X</strong> on the dark bar. To access your view again later, go to <strong>Data > Filter views</strong> and select your named view from the list.",
+                // REPLACE THIS URL with your actual image URL for Image 6
+                image: "image6.jpg"
+            }
+        ];
+
+        let currentStep = 0;
+
+        const guideContentEl = document.getElementById('guide-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const progressBar = document.getElementById('progress-bar');
+        const introSection = document.getElementById('intro');
+        const tutorialSection = document.getElementById('tutorial');
+        const summarySection = document.getElementById('summary');
+
+        function startGuide() {
+            currentStep = 0;
+            introSection.classList.add('hidden');
+            summarySection.classList.add('hidden');
+            tutorialSection.classList.remove('hidden');
+            renderStep(currentStep);
+        }
+        
+        function renderStep(stepIndex) {
+            if (stepIndex < 0 || stepIndex >= guideSteps.length) {
+                return;
+            }
+
+            const stepData = guideSteps[stepIndex];
+
+            guideContentEl.innerHTML = `
+                <div class="guide-step active guide-transition" id="step-${stepIndex}">
+                    <h3 class="text-xl md:text-2xl font-bold text-center text-[#34495e] mb-4">${stepData.title}</h3>
+                    <div class="bg-gray-100 rounded-lg p-2 border border-gray-200 mb-6">
+                       <img src="${stepData.image}" alt="Visual guide for ${stepData.title}" class="rounded-md w-full h-auto object-cover">
+                    </div>
+                    <p class="text-base md:text-lg text-gray-600 leading-relaxed text-center">${stepData.description}</p>
+                </div>
+            `;
+            
+            updateNavigation();
+        }
+        
+        function updateNavigation() {
+            progressIndicator.textContent = `Step ${currentStep + 1} of ${guideSteps.length}`;
+            
+            const progressPercentage = ((currentStep + 1) / guideSteps.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            
+            prevBtn.disabled = currentStep === 0;
+            nextBtn.disabled = currentStep === guideSteps.length - 1;
+
+            if (currentStep === guideSteps.length - 1) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        function navigate(direction) {
+            if(nextBtn.textContent === 'Finish' && direction === 1) {
+                tutorialSection.classList.add('hidden');
+                summarySection.classList.remove('hidden');
+                return;
+            }
+
+            const newStep = currentStep + direction;
+            if (newStep >= 0 && newStep < guideSteps.length) {
+                currentStep = newStep;
+                renderStep(currentStep);
+            }
+        }
+
+    </script>
+
+</body>
+</html>
